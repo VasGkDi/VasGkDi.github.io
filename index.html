@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title> Index</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		html, body {
+			width: 100%;
+			height: 100%;
+			background: #000;
+			overflow: hidden;
+		}
+
+		body {
+			display: grid;
+			place-items: center;
+		}
+
+		#bg {
+			position: fixed;
+			inset: 0;
+			width: 100vw;
+			height: 100vh;
+			display: block;
+			z-index: 0;
+			image-rendering: pixelated;
+			image-rendering: crisp-edges;
+		}
+
+		canvas {
+			image-rendering: pixelated;
+			image-rendering: crisp-edges;
+			position: relative;
+			z-index: 1;
+			border: 0;
+			outline: none;
+
+		}
+
+		/* IDLE SPRITE POSITION (EDIT THESE): change top/left/transform below to move Idle-Anim on screen */
+		#sprite {
+			position: absolute;
+			top: 30vh;
+			left: 50vw;
+			transform: translate(-50%, -50%);
+			z-index: 4;
+			/* Keep sprite visible on top but do NOT block clicks to elements behind it */
+			pointer-events: none;
+		}
+
+		#oval-wrap {
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			z-index: 3;
+			/* YELLOW OVAL SIZE: change width/height below */
+			width: 620px;
+			height: 460px;
+		}
+
+		#spin-oval {
+			width: 100%;
+			height: 100%;
+			display: block;
+			transform: rotate(-25deg);
+			transform-origin: center;
+			cursor: pointer;
+			user-select: none;
+		}
+
+		#oval-links {
+			position: absolute;
+			inset: 0;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			gap: 22px;
+			pointer-events: none;
+			font-family: Arial, sans-serif;
+			font-size: 28px;
+			font-weight: 700;
+		}
+
+		#music-toggle {
+			position: absolute;
+			top: calc(50% + 42px);
+			left: 50%;
+			transform: translateX(-50%);
+			z-index: 4;
+			padding: 8px 14px;
+			background: #ffe066;
+			color: #3b2800;
+			font-family: Arial, sans-serif;
+			font-size: 16px;
+			font-weight: 700;
+			cursor: pointer;
+		}
+
+		#music-toggle:hover {
+			filter: brightness(0.95);
+		}
+
+		#oval-links a {
+			pointer-events: auto;
+			color: #ff0000;
+			text-decoration: none;
+			padding: 2px 6px;
+		}
+
+		#oval-links a:hover {
+			text-decoration: underline;
+		}
+	</style>
+</head>
+<body>
+	<!-- MUSIC: change src to your file (example: music.mp3), autoplay is attempted on load -->
+	<audio id="bg-music" src="assets/audio/music/toby fox - UNDERTALE Soundtrack - 03 Your Best Friend.mp3"></audio>
+	<canvas id="bg"></canvas>
+	<canvas id="sprite"></canvas>
+	<div id="oval-wrap">
+		<svg id="spin-oval" viewBox="0 0 240 150" aria-label="spinning yellow oval" role="img">
+			<!-- YELLOW OVAL OUTLINE: change stroke (color) and stroke-width (thickness) below -->
+			<ellipse cx="120" cy="75" rx="95" ry="45" fill="#ffd300" stroke="#ffd300" stroke-width="6"></ellipse>
+		</svg>
+		<nav id="oval-links" aria-label="site links">
+			<a id="about-link" href="about.html" style="font-family:Georgia" >About</a>
+            <a href="data.html" style="font-family:Georgia">Data</a>
+			<a href="credits.html" style="font-family:Georgia">Credits</a>			
+		</nav>
+		<button id="music-toggle" type="button">Play Music</button>
+	</div>
+
+	<script>
+		const frameWidth = 24;
+		const frameHeight = 48;
+		const durations = [18, 8, 18, 8];
+		const tickMs = 1000 / 60;
+		const bgZoom = 2;
+
+		const bgCanvas = document.getElementById("bg");
+		const bgCtx = bgCanvas.getContext("2d");
+		const canvas = document.getElementById("sprite");
+		const ctx = canvas.getContext("2d");
+		const spinOval = document.getElementById("spin-oval");
+		const aboutLink = document.getElementById("about-link");
+		const bgMusic = document.getElementById("bg-music");
+		const musicToggle = document.getElementById("music-toggle");
+		const spinSfxFiles = [
+			"assets/audio/sfx/Whaaa.m4a",
+			"assets/audio/sfx/Wheee.m4a",
+			"assets/audio/sfx/Whooo.m4a"
+		];
+
+		aboutLink.addEventListener("click", (event) => {
+			event.preventDefault();
+			const target = Math.random() < 0.1 ? "aboutSurprise.html" : "about.html";
+			window.location.href = target;
+		});
+
+		bgMusic.volume = 0.1;
+
+		function playRandomSpinSfx() {
+			const randomFile = spinSfxFiles[Math.floor(Math.random() * spinSfxFiles.length)];
+			const sfx = new Audio(randomFile);
+			sfx.volume = 1;
+			sfx.play().catch(() => {});
+		}
+
+		function tryStartMusic() {
+			bgMusic.play().catch(() => {});
+		}
+
+
+
+		musicToggle.addEventListener("click", () => {
+			if (bgMusic.paused) {
+				bgMusic.play().catch(() => {});
+				musicToggle.textContent = "Pause Music";
+			} else {
+				bgMusic.pause();
+				musicToggle.textContent = "Play Music";
+			}
+		});
+
+		const bgImage = new Image();
+		bgImage.src = "assets/images/backgrounds/Index.png";
+
+		const image = new Image();
+		image.src = "assets/images/sprites/Idle-Anim.png";
+
+		let ovalRotation = -25;
+		spinOval.addEventListener("click", () => {
+			playRandomSpinSfx();
+			const spinAmount = (180 + Math.random() * 720) * (Math.random() < 0.5 ? -1 : 1);
+			ovalRotation += spinAmount;
+			spinOval.style.transition = "transform 650ms cubic-bezier(0.22, 0.9, 0.2, 1)";
+			spinOval.style.transform = `rotate(${ovalRotation}deg)`;
+		});
+
+		function clamp(value, min, max) {
+			return Math.min(max, Math.max(min, value));
+		}
+
+		Promise.all([
+			new Promise((resolve) => {
+				image.onload = resolve;
+			}),
+			new Promise((resolve) => {
+				bgImage.onload = resolve;
+			})
+		]).then(() => {
+			/* IDLE SPRITE SIZE: increase/decrease this scale value */
+			const scale = 8;
+			canvas.width = frameWidth * scale;
+			canvas.height = frameHeight * scale;
+			ctx.imageSmoothingEnabled = false;
+			bgCtx.imageSmoothingEnabled = false;
+
+			const totalRows = Math.floor(image.height / frameHeight);
+			const imageWidth = bgImage.width;
+			const imageHeight = bgImage.height;
+
+			function resizeBg() {
+				bgCanvas.width = window.innerWidth;
+				bgCanvas.height = window.innerHeight;
+			}
+
+			resizeBg();
+			window.addEventListener("resize", resizeBg);
+
+			let frame = 0;
+			let row = 0;
+			let frameElapsed = 0;
+			let last = performance.now();
+
+			let camX = 0;
+			let camY = 0;
+			let vx = 0;
+			let vy = 0;
+			let targetX = 0;
+			let targetY = 0;
+			let targetVx = vx;
+			let targetVy = vy;
+			let redirectTimer = 0;
+			const minSpeed = 10;
+			const maxSpeed = 32;
+
+			function getViewSize() {
+				return {
+					virtualW: Math.ceil(bgCanvas.width / bgZoom),
+					virtualH: Math.ceil(bgCanvas.height / bgZoom)
+				};
+			}
+
+			function pickDirection() {
+				const { virtualW, virtualH } = getViewSize();
+				const maxCamX = Math.max(0, imageWidth - virtualW);
+				const maxCamY = Math.max(0, imageHeight - virtualH);
+				targetX = Math.random() * maxCamX;
+				targetY = Math.random() * maxCamY;
+				redirectTimer = 1400 + Math.random() * 2200;
+			}
+
+			pickDirection();
+
+			function drawBackgroundCrop(cameraX, cameraY, viewW, viewH) {
+				const srcW = Math.min(viewW, imageWidth);
+				const srcH = Math.min(viewH, imageHeight);
+				const srcX = clamp(Math.floor(cameraX), 0, Math.max(0, imageWidth - srcW));
+				const srcY = clamp(Math.floor(cameraY), 0, Math.max(0, imageHeight - srcH));
+				const dstX = Math.floor((viewW - srcW) / 2);
+				const dstY = Math.floor((viewH - srcH) / 2);
+
+				bgCtx.drawImage(bgImage, srcX, srcY, srcW, srcH, dstX, dstY, srcW, srcH);
+			}
+
+			function loop(now) {
+				const dt = now - last;
+				last = now;
+				const dtSec = dt / 1000;
+
+				redirectTimer -= dt;
+				if (redirectTimer <= 0) {
+					pickDirection();
+				}
+
+				const { virtualW, virtualH } = getViewSize();
+				const maxCamX = Math.max(0, imageWidth - virtualW);
+				const maxCamY = Math.max(0, imageHeight - virtualH);
+
+				camX = clamp(camX, 0, maxCamX);
+				camY = clamp(camY, 0, maxCamY);
+				targetX = clamp(targetX, 0, maxCamX);
+				targetY = clamp(targetY, 0, maxCamY);
+
+				const dxToTarget = targetX - camX;
+				const dyToTarget = targetY - camY;
+				const dist = Math.hypot(dxToTarget, dyToTarget) || 1;
+				const speed = Math.min(maxSpeed, Math.max(minSpeed, dist * 0.25));
+
+				targetVx = (dxToTarget / dist) * speed;
+				targetVy = (dyToTarget / dist) * speed;
+
+				vx += (targetVx - vx) * 0.06;
+				vy += (targetVy - vy) * 0.06;
+				camX += vx * dtSec;
+				camY += vy * dtSec;
+				camX = clamp(camX, 0, maxCamX);
+				camY = clamp(camY, 0, maxCamY);
+
+				if (dist < 8) {
+					pickDirection();
+				}
+
+				const renderCamX = Math.floor(camX);
+				const renderCamY = Math.floor(camY);
+
+				bgCtx.setTransform(1, 0, 0, 1, 0, 0);
+				bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+				bgCtx.setTransform(bgZoom, 0, 0, bgZoom, 0, 0);
+				drawBackgroundCrop(renderCamX, renderCamY, virtualW, virtualH);
+				bgCtx.setTransform(1, 0, 0, 1, 0, 0);
+
+				frameElapsed += dt;
+
+				if (frameElapsed >= durations[frame] * tickMs) {
+					frameElapsed = 0;
+					frame = (frame + 1) % durations.length;
+
+					if (frame === 0) {
+						row = (row + 1) % totalRows;
+					}
+				}
+
+				const sx = frame * frameWidth;
+				const sy = row * frameHeight;
+
+				ctx.clearRect(0, 0, canvas.width, canvas.height);
+				ctx.drawImage(image, sx, sy, frameWidth, frameHeight, 0, 0, canvas.width, canvas.height);
+
+				requestAnimationFrame(loop);
+			}
+
+			requestAnimationFrame(loop);
+		});
+	</script>
+</body>
+</html>

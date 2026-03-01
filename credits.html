@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Credits</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		html, body {
+			width: 100%;
+			min-height: 100%;
+			background: #000;
+			overflow-x: hidden;
+			overflow-y: auto;
+			font-family: Georgia, Georgia;
+		}
+
+		#bg {
+			position: fixed;
+			inset: 0;
+			width: 100vw;
+			height: 100vh;
+			display: block;
+			z-index: 0;
+			image-rendering: pixelated;
+			image-rendering: crisp-edges;
+		}
+        
+		#sprite {
+			position: absolute;
+			top: 0;
+			left: 0;
+			transform: translate(-50%, -50%);
+			z-index: 4;
+			/* Keep sprite visible on top but do NOT block clicks to elements behind it */
+			pointer-events: none;
+			image-rendering: pixelated;
+			image-rendering: crisp-edges;
+			image-rendering: -moz-crisp-edges;
+			image-rendering: -webkit-optimize-contrast;
+		}
+
+		.page {
+			position: relative;
+			min-height: 100vh;
+			display: grid;
+			place-items: center;
+			z-index: 1;
+			padding: 24px;
+		}
+
+		.about-card {
+			width: min(1100px, 92vw);
+			min-height: min(680px, 86vh);
+			height: auto;
+			display: grid;
+			grid-template-columns: 0.95fr 1.25fr;
+			background: rgba(0, 0, 0, 0.64);
+			border: 3px solid #ffe066;
+			box-shadow: 0 0 0 3px #000;
+			backdrop-filter: blur(2px);
+		}
+
+		.left-panel {
+			padding: 16px;
+			display: grid;
+			place-items: center;
+			position: relative;
+		}
+
+		.race-wrap {
+			width: 100%;
+			height: 100%;
+			display: grid;
+			grid-template-rows: auto 1fr auto;
+			gap: 10px;
+		}
+
+		.race-title {
+			font-size: 1rem;
+			text-align: center;
+			color: #ffe066;
+			font-weight: 700;
+		}
+
+		.race-svg {
+			width: 100%;
+			height: 100%;
+			min-height: 360px;
+			border: 2px solid #ffe066;
+			background: rgba(0, 0, 0, 0.35);
+		}
+
+		.race-lane {
+			stroke: rgba(255, 224, 102, 0.35);
+			stroke-width: 2;
+		}
+
+		.race-finish {
+			stroke: #ffe066;
+			stroke-width: 4;
+			stroke-dasharray: 8 6;
+		}
+
+		.race-ball {
+			cursor: pointer;
+			transition: none;
+		}
+
+		.race-ball.selected {
+			stroke: #fff;
+			stroke-width: 4;
+		}
+
+		.race-status {
+			font-size: 0.92rem;
+			text-align: center;
+			color: #f6f2cf;
+			min-height: 1.3em;
+		}
+
+		.race-popup {
+			position: absolute;
+			inset: 0;
+			display: grid;
+			place-items: center;
+			background: rgba(0, 0, 0, 0.62);
+			z-index: 6;
+		}
+
+		.race-popup.hidden {
+			display: none;
+		}
+
+		.race-popup-card {
+			padding: 16px 20px;
+			border: 2px solid #ffe066;
+			background: rgba(0, 0, 0, 0.85);
+			text-align: center;
+			min-width: 180px;
+		}
+
+		.race-popup-card p {
+			margin: 0 0 10px 0;
+			color: #f6f2cf;
+			font-size: 1.15rem;
+			font-weight: 700;
+		}
+
+		.race-popup-card button {
+			border: 2px solid #ffe066;
+			background: #000;
+			color: #ffe066;
+			padding: 6px 12px;
+			font-weight: 700;
+			cursor: pointer;
+		}
+
+		.left-panel img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			border: 2px solid #ffe066;
+			image-rendering: pixelated;
+			image-rendering: crisp-edges;
+		}
+
+		.right-panel {
+			padding: 28px;
+			color: #f6f2cf;
+			overflow: visible;
+		}
+
+		.right-panel h1 {
+			font-size: clamp(2rem, 4vw, 2.8rem);
+			margin-bottom: 14px;
+			color: #ffe066;
+		}
+
+		.right-panel p {
+			font-size: 1.08rem;
+			line-height: 1.6;
+			margin-bottom: 14px;
+		}
+
+		.section-intro {
+			font-size: 1.02rem;
+			margin-bottom: 14px;
+			color: #f1e7a4;
+		}
+
+		.citation-list {
+			list-style: none;
+			display: grid;
+			gap: 10px;
+			margin-bottom: 14px;
+		}
+
+		.citation-item {
+			padding: 10px;
+			border: 2px solid #ffe066;
+			background: rgba(0, 0, 0, 0.45);
+		}
+
+		.citation-item strong {
+			display: block;
+			margin-bottom: 4px;
+			color: #ffe066;
+			font-size: 0.98rem;
+		}
+
+		.citation-item a {
+			color: #f6f2cf;
+			text-decoration: none;
+			word-break: break-word;
+			font-size: 0.92rem;
+			line-height: 1.4;
+		}
+
+		.citation-item a:hover {
+			text-decoration: underline;
+			color: #ffdf7a;
+		}
+
+		.right-panel .note {
+			font-size: 0.95rem;
+			opacity: 0.9;
+			color: #f1e7a4;
+		}
+
+		.nav-back {
+			display: inline-block;
+			margin-top: 10px;
+			color: #ff7b7b;
+			text-decoration: none;
+			font-weight: 700;
+		}
+
+		.nav-back:hover {
+			text-decoration: underline;
+		}
+
+		@media (max-width: 900px) {
+			.about-card {
+				grid-template-columns: 1fr;
+				min-height: min(760px, 92vh);
+				height: auto;
+			}
+
+			.left-panel {
+				min-height: 360px;
+				border-right: 0;
+				border-bottom: 2px solid #ffe066;
+			}
+
+			.race-svg {
+				min-height: 300px;
+			}
+		}
+	</style>
+</head>
+<body>
+	<canvas id="bg"></canvas>
+	<canvas id="sprite"></canvas>
+
+	<div class="page">
+		<section class="about-card">
+			<div class="left-panel">
+				<div class="race-wrap">
+					<p class="race-title">Click on a square to Square Off!!</p>
+					<svg id="raceTrack" class="race-svg" viewBox="0 0 300 420" role="img" aria-label="Square racing game">
+						<line class="race-finish" x1="20" y1="38" x2="280" y2="38"></line>
+						<line class="race-lane" x1="100" y1="40" x2="100" y2="396"></line>
+						<line class="race-lane" x1="200" y1="40" x2="200" y2="396"></line>
+						<rect id="ball1" class="race-ball" data-lane="1" x="28" y="362" width="44" height="44" fill="#ff7b7b"></rect>
+						<rect id="ball2" class="race-ball" data-lane="2" x="128" y="362" width="44" height="44" fill="#7be4ff"></rect>
+						<rect id="ball3" class="race-ball" data-lane="3" x="228" y="362" width="44" height="44" fill="#9dff7b"></rect>
+					</svg>
+					<p id="raceStatus" class="race-status">Click a square to start a randomized race.</p>
+				</div>
+				<div id="racePopup" class="race-popup hidden" aria-live="polite">
+					<div class="race-popup-card">
+						<p id="raceResult">nice</p>
+						<button id="raceClose" type="button">Close</button>
+					</div>
+				</div>
+			</div>
+			<div class="right-panel">
+				<!-- ABOUT TEXT: edit this text section -->
+				<h1>Credits &amp; Sources</h1>
+				<p class="section-intro">Πηγές που χρησιμοποιήθηκαν για το γράφημα και την ανάλυση:</p>
+				<ul class="citation-list">
+					<li class="citation-item">
+						<strong>Vox άρθρο απο το οποίο άντλησα το γράφημα</strong>
+						<a href="https://www.vox.com/2015/9/29/9417845/planned-parenthood-terrible-chart?utm_campaign=vox&utm_content=chorus&utm_medium=social&utm_source=twitter" target="_blank" rel="noopener noreferrer">
+							https://www.vox.com/2015/9/29/9417845/planned-parenthood-terrible-chart
+						</a>
+					</li>
+					<li class="citation-item">
+						<strong>Vox άρθρο χωρίς paywall</strong>
+						<a href="https://smry.ai/proxy?url=https%3A%2F%2Fwww.vox.com%2F2015%2F9%2F29%2F9417845%2Fplanned-parenthood-terrible-chart" target="_blank" rel="noopener noreferrer">
+							https://smry.ai/proxy?url=https%3A%2F%2Fwww.vox.com%2F2015%2F9%2F29%2F9417845%2Fplanned-parenthood-terrible-chart
+						</a>
+					</li>
+					<li class="citation-item">
+						<strong>Video από το οποίο βρήκα το γράφημα</strong>
+						<a href="https://www.youtube.com/watch?v=BwtwOqdlY5E" target="_blank" rel="noopener noreferrer">
+							https://www.youtube.com/watch?v=BwtwOqdlY5E
+						</a>
+					</li>
+					<li class="citation-item">
+						<strong>Floating chimecho sprite</strong>
+						<a href="https://sprites.pmdcollab.org/#/0358?form=0" target="_blank" rel="noopener noreferrer">
+							https://sprites.pmdcollab.org/#/0358?form=0
+						</a>
+					</li>
+					<li class="citation-item">
+						<strong>Index page Seinfeld Logo Inspo</strong>
+						<a href="https://commons.wikimedia.org/wiki/File:Seinfeld_English_logo.png" target="_blank" rel="noopener noreferrer">
+							https://commons.wikimedia.org/wiki/File:Seinfeld_English_logo.png
+						</a>
+					</li>
+					<li class="citation-item">
+						<strong>Canva for the photo editing</strong>
+						<a href="https://www.canva.com/" target="_blank" rel="noopener noreferrer">
+							https://www.canva.com/
+						</a>
+					</li>
+					<li class="citation-item">
+						<strong>Original Photo for the backgrounds</strong>
+						<a href="https://fineartamerica.com/featured/fresh-raw-beef-steak-marbled-meat-texture-close-up-background-julien.html" target="_blank" rel="noopener noreferrer">
+							https://fineartamerica.com/featured/fresh-raw-beef-steak-marbled-meat-texture-close-up-background-julien.html
+						</a>
+					</li>
+					<li class="citation-item">
+						<strong>Idea for the background</strong>
+						<a href="https://youtu.be/8BWOkN_zi3Y" target="_blank" rel="noopener noreferrer">
+							https://youtu.be/8BWOkN_zi3Y
+						</a>
+						</li>
+					<li class="citation-item">
+						<strong>Background music</strong>
+						<a href="http://youtube.com/watch?v=MacoenOy9Ss" target="_blank" rel="noopener noreferrer">
+							http://youtube.com/watch?v=MacoenOy9Ss
+						</a>
+					</li>
+
+
+				</ul>
+				<a class="nav-back" href="index.html">← Back to Home</a>
+			</div>
+		</section>
+	</div>
+
+	<script>
+		const frameWidth = 24;
+		const frameHeight = 48;
+		const rowIndex = 7;
+		const durations = [18, 8, 18, 8];
+		const tickMs = 1000 / 60;
+
+		const bgZoom = 2;
+		const bgCanvas = document.getElementById("bg");
+		const bgCtx = bgCanvas.getContext("2d");
+		const spriteCanvas = document.getElementById("sprite");
+		const spriteCtx = spriteCanvas.getContext("2d");
+		const aboutCard = document.querySelector(".about-card");
+		const spriteAnchorXRatio = 0.98;
+		const spriteAnchorYRatio = 0.1;
+		const spriteOffsetX = 0;
+		const spriteOffsetY = 0;
+		const bgImage = new Image();
+		bgImage.src = "assets/images/backgrounds/CreditsBG.png";
+		const idleImage = new Image();
+		idleImage.src = "assets/images/sprites/Idle-Anim.png";
+
+		function positionSpriteAnchor() {
+			if (!aboutCard) {
+				return;
+			}
+
+			const rect = aboutCard.getBoundingClientRect();
+			const anchorX = window.scrollX + rect.left + rect.width * spriteAnchorXRatio + spriteOffsetX;
+			const anchorY = window.scrollY + rect.top + rect.height * spriteAnchorYRatio + spriteOffsetY;
+
+			spriteCanvas.style.left = `${anchorX}px`;
+			spriteCanvas.style.top = `${anchorY}px`;
+		}
+
+		function clamp(value, min, max) {
+			return Math.min(max, Math.max(min, value));
+		}
+
+		bgImage.onload = () => {
+			bgCtx.imageSmoothingEnabled = false;
+			spriteCtx.imageSmoothingEnabled = false;
+			spriteCtx.webkitImageSmoothingEnabled = false;
+			spriteCtx.mozImageSmoothingEnabled = false;
+			spriteCtx.msImageSmoothingEnabled = false;
+
+			const scale = 6;
+			spriteCanvas.width = frameWidth * scale;
+			spriteCanvas.height = frameHeight * scale;
+
+			const imageWidth = bgImage.width;
+			const imageHeight = bgImage.height;
+			let frame = 0;
+			let frameElapsed = 0;
+
+			function resizeBg() {
+				bgCanvas.width = window.innerWidth;
+				bgCanvas.height = window.innerHeight;
+			}
+
+			resizeBg();
+			window.addEventListener("resize", resizeBg);
+			positionSpriteAnchor();
+			window.addEventListener("resize", positionSpriteAnchor);
+			window.addEventListener("scroll", positionSpriteAnchor, { passive: true });
+
+			let camX = 0;
+			let camY = 0;
+			let vx = 0;
+			let vy = 0;
+			let targetX = 0;
+			let targetY = 0;
+			let targetVx = 0;
+			let targetVy = 0;
+			let redirectTimer = 0;
+			let last = performance.now();
+
+			const minSpeed = 10;
+			const maxSpeed = 32;
+
+			function getViewSize() {
+				return {
+					virtualW: Math.ceil(bgCanvas.width / bgZoom),
+					virtualH: Math.ceil(bgCanvas.height / bgZoom)
+				};
+			}
+
+			function pickDirection() {
+				const { virtualW, virtualH } = getViewSize();
+				const maxCamX = Math.max(0, imageWidth - virtualW);
+				const maxCamY = Math.max(0, imageHeight - virtualH);
+				targetX = Math.random() * maxCamX;
+				targetY = Math.random() * maxCamY;
+				redirectTimer = 1400 + Math.random() * 2200;
+			}
+
+			function drawBackgroundCrop(cameraX, cameraY, viewW, viewH) {
+				const srcW = Math.min(viewW, imageWidth);
+				const srcH = Math.min(viewH, imageHeight);
+				const srcX = clamp(Math.floor(cameraX), 0, Math.max(0, imageWidth - srcW));
+				const srcY = clamp(Math.floor(cameraY), 0, Math.max(0, imageHeight - srcH));
+				const dstX = Math.floor((viewW - srcW) / 2);
+				const dstY = Math.floor((viewH - srcH) / 2);
+
+				bgCtx.drawImage(bgImage, srcX, srcY, srcW, srcH, dstX, dstY, srcW, srcH);
+			}
+
+			pickDirection();
+
+			function loop(now) {
+				positionSpriteAnchor();
+				const dt = now - last;
+				last = now;
+				const dtSec = dt / 1000;
+
+				redirectTimer -= dt;
+				if (redirectTimer <= 0) {
+					pickDirection();
+				}
+
+				const { virtualW, virtualH } = getViewSize();
+				const maxCamX = Math.max(0, imageWidth - virtualW);
+				const maxCamY = Math.max(0, imageHeight - virtualH);
+
+				camX = clamp(camX, 0, maxCamX);
+				camY = clamp(camY, 0, maxCamY);
+				targetX = clamp(targetX, 0, maxCamX);
+				targetY = clamp(targetY, 0, maxCamY);
+
+				const dxToTarget = targetX - camX;
+				const dyToTarget = targetY - camY;
+				const dist = Math.hypot(dxToTarget, dyToTarget) || 1;
+				const speed = Math.min(maxSpeed, Math.max(minSpeed, dist * 0.25));
+
+				targetVx = (dxToTarget / dist) * speed;
+				targetVy = (dyToTarget / dist) * speed;
+
+				vx += (targetVx - vx) * 0.06;
+				vy += (targetVy - vy) * 0.06;
+				camX += vx * dtSec;
+				camY += vy * dtSec;
+				camX = clamp(camX, 0, maxCamX);
+				camY = clamp(camY, 0, maxCamY);
+
+				if (dist < 8) {
+					pickDirection();
+				}
+
+				const renderCamX = Math.floor(camX);
+				const renderCamY = Math.floor(camY);
+
+				bgCtx.setTransform(1, 0, 0, 1, 0, 0);
+				bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+				bgCtx.setTransform(bgZoom, 0, 0, bgZoom, 0, 0);
+				drawBackgroundCrop(renderCamX, renderCamY, virtualW, virtualH);
+				bgCtx.setTransform(1, 0, 0, 1, 0, 0);
+
+				if (idleImage.complete && idleImage.naturalWidth > 0) {
+					spriteCtx.imageSmoothingEnabled = false;
+					frameElapsed += dt;
+					if (frameElapsed >= durations[frame] * tickMs) {
+						frameElapsed = 0;
+						frame = (frame + 1) % durations.length;
+					}
+
+					const sx = frame * frameWidth;
+					const sy = rowIndex * frameHeight;
+					spriteCtx.clearRect(0, 0, spriteCanvas.width, spriteCanvas.height);
+					spriteCtx.drawImage(idleImage, sx, sy, frameWidth, frameHeight, 0, 0, spriteCanvas.width, spriteCanvas.height);
+				}
+
+				requestAnimationFrame(loop);
+			}
+
+			requestAnimationFrame(loop);
+		};
+
+		const raceBalls = Array.from(document.querySelectorAll(".race-ball"));
+		const raceStatus = document.getElementById("raceStatus");
+		const racePopup = document.getElementById("racePopup");
+		const raceResult = document.getElementById("raceResult");
+		const raceClose = document.getElementById("raceClose");
+
+		const laneX = [50, 150, 250];
+		const startY = 384;
+		const finishY = 52;
+		const racerSize = 44;
+		const halfRacerSize = racerSize / 2;
+		let selectedLane = null;
+		let racing = false;
+
+		function setRacerPosition(ball, centerX, centerY) {
+			ball.setAttribute("x", String(centerX - halfRacerSize));
+			ball.setAttribute("y", String(centerY - halfRacerSize));
+		}
+
+		function resetRacePositions() {
+			raceBalls.forEach((ball, index) => {
+				setRacerPosition(ball, laneX[index], startY);
+			});
+		}
+
+		function showRacePopup(message) {
+			raceResult.textContent = message;
+			racePopup.classList.remove("hidden");
+		}
+
+		function runRace() {
+			if (selectedLane === null || racing) {
+				return;
+			}
+
+			racing = true;
+			raceStatus.textContent = "Racing...";
+
+			const racers = raceBalls.map((ball, index) => ({
+				ball,
+				lane: index + 1,
+				y: startY,
+				speed: 1.5 + Math.random() * 1.1
+			}));
+
+			let winnerLane = null;
+
+			function tick() {
+				for (const racer of racers) {
+					const burst = (Math.random() - 0.5) * 0.9;
+					racer.speed = Math.max(1.1, Math.min(3.2, racer.speed + burst * 0.18));
+					racer.y -= racer.speed;
+					setRacerPosition(racer.ball, laneX[racer.lane - 1], racer.y);
+					if (!winnerLane && racer.y <= finishY) {
+						winnerLane = racer.lane;
+					}
+				}
+
+				if (winnerLane) {
+					racing = false;
+					raceStatus.textContent = `Winner: Square ${winnerLane}. Pick a square to race again.`;
+					showRacePopup(winnerLane === selectedLane ? "Baller Manoeuvre" : "Triangle Methodologies");
+					return;
+				}
+
+				requestAnimationFrame(tick);
+			}
+
+			requestAnimationFrame(tick);
+		}
+
+		raceBalls.forEach((ball) => {
+			ball.addEventListener("click", () => {
+				if (racing) {
+					return;
+				}
+
+				selectedLane = Number(ball.dataset.lane);
+				raceBalls.forEach((item) => item.classList.remove("selected"));
+				ball.classList.add("selected");
+				resetRacePositions();
+				runRace();
+			});
+		});
+
+		raceClose.addEventListener("click", () => {
+			racePopup.classList.add("hidden");
+			resetRacePositions();
+		});
+
+		resetRacePositions();
+	</script>
+</body>
+</html>

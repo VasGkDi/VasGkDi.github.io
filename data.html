@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Data Visualization</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		html, body {
+			width: 100%;
+			min-height: 100%;
+			background: #000;
+			overflow-x: hidden;
+			overflow-y: auto;
+			font-family: Georgia, Georgia;
+		}
+
+		#bg {
+			position: fixed;
+			inset: 0;
+			width: 100vw;
+			height: 100vh;
+			display: block;
+			z-index: 0;
+			image-rendering: pixelated;
+			image-rendering: crisp-edges;
+		}
+        
+		#sprite {
+			position: absolute;
+			top: 20vh;
+			left: 85vw;
+			transform: translate(-50%, -50%);
+			z-index: 4;
+			/* Keep sprite visible on top but do NOT block clicks to elements behind it */
+			pointer-events: none;
+			image-rendering: pixelated;
+			image-rendering: crisp-edges;
+			image-rendering: -moz-crisp-edges;
+			image-rendering: -webkit-optimize-contrast;
+		}
+
+		.page {
+			position: relative;
+			min-height: 100vh;
+			display: grid;
+			place-items: center;
+			z-index: 1;
+			padding: 24px;
+		}
+
+		.about-card {
+			width: min(1100px, 92vw);
+			min-height: min(680px, 86vh);
+			height: auto;
+			display: grid;
+			grid-template-columns: 0.95fr 1.25fr;
+			background: rgba(0, 0, 0, 0.64);
+			border: 3px solid #ffe066;
+			box-shadow: 0 0 0 3px #000;
+			backdrop-filter: blur(2px);
+		}
+
+		.left-panel {
+			padding: 22px;
+			display: flex;
+			flex-direction: column;
+			gap: 12px;
+			overflow: visible;
+		}
+
+		.left-panel img {
+			width: 100%;
+			height: auto;
+			max-height: 70%;
+			object-fit: contain;
+	            transform: none;
+		}
+
+		.left-panel p {
+			font-size: 1.02rem;
+			line-height: 1.55;
+			color: #f6f2cf;
+			transform: translateX(20px) 
+		}
+
+		.right-panel {
+			padding: 28px;
+			color: #f6f2cf;
+			overflow: visible;
+		}
+
+		.right-panel img {
+			width: 60%;
+			height: 60%;
+			object-fit: contain;
+		}
+
+
+		.right-panel h1 {
+			font-size: clamp(2rem, 4vw, 2.8rem);
+			margin-bottom: 14px;
+			color: #ffe066;
+		}
+
+		.right-panel p {
+			font-size: 1.08rem;
+			line-height: 1.6;
+			margin-bottom: 14px;
+		}
+
+		.right-panel .note {
+			font-size: 0.95rem;
+			opacity: 0.9;
+			color: #f1e7a4;
+		}
+
+		.nav-back {
+			display: inline-block;
+			margin-top: 10px;
+			color: #ff7b7b;
+			text-decoration: none;
+			font-weight: 700;
+			transform: translateX(20px) 
+
+		}
+
+		.nav-back:hover {
+			text-decoration: underline;
+		}
+
+		@media (max-width: 900px) {
+			.about-card {
+				grid-template-columns: 1fr;
+				min-height: min(760px, 92vh);
+				height: auto;
+			}
+
+			.left-panel {
+				height: 260px;
+				border-right: 0;
+				border-bottom: 2px solid #ffe066;
+			}
+		}
+	</style>
+</head>
+<body>
+	<canvas id="bg"></canvas>
+	<canvas id="sprite"></canvas>
+
+	<div class="page">
+		<section class="about-card">
+			<div class="left-panel">
+				<!-- LEFT IMAGE: change src to any image you want -->
+				<img src="assets/images/content/evilData.png" alt="Bad Data Vized image" />
+				<p></p><p></p><p></p><p>
+				<p align="right">
+					Στην πραγματικότητα ένα γράφημα σαν αυτό είναι πιο ακριβές και καθιστά σαφές πως δεν 
+					υπάρχει καλή σχέση μεταξύ των μεγεθών που απεικονίζει. Αυτό πιστεύω είναι ένα καλό παράδειγμα
+					του πόσο σημασία έχει ο τροπος που παρουσιάζονται δοδομένα και συγχρόνως 
+					πόσο εύκολα μπορεί να την "πατήσει" κάποιο άτομο αν δεν διαβάζει προσεκτικά τις πληροφορίες που αντικρίζει.
+				</p>
+				<a align="right" class="nav-back" href="index.html">← Back to Home</a>
+				
+			</div>
+			<div class="right-panel">
+				<!-- Data TEXT: edit this text section -->
+				<h1>Data Visualization</h1>
+				<p>
+					Ο εκπρόσωπος της Γιούτα, Jason Chaffetz, το 2015 παρουσίασε το διπλανό γράφημα σε ακρόαση 
+					του Κογκρέσου σχετικά με την προγραμματισμένη χρηματοδότηση του Οικογενειακού Προγραμματισμού. 
+					Είναι εμφανές ότι το γράφημα αυτό είναι παραπλανητικό, καθώς η κλίμακα Υ δεν ακολουθεί κάποιο κανόνα και τα βέλη 
+					αντί να απεικονίζουν την πραγματική σχέση των μεγεθών μεταξύ τους αποτυπώνουν μια αφηρημένη τάση τους.
+				</p>
+				
+				<img src="assets/images/content/goodData.png" alt="Good Data Vized image" />
+			</div>
+		</section>
+	</div>
+
+	<script>
+		const frameWidth = 24;
+		const frameHeight = 48;
+		const rowIndex = 7;
+		const durations = [18, 8, 18, 8];
+		const tickMs = 1000 / 60;
+
+		const bgZoom = 2;
+		const bgCanvas = document.getElementById("bg");
+		const bgCtx = bgCanvas.getContext("2d");
+		const spriteCanvas = document.getElementById("sprite");
+		const spriteCtx = spriteCanvas.getContext("2d");
+		const bgImage = new Image();
+		bgImage.src = "assets/images/backgrounds/DataBG.jpg";
+		const idleImage = new Image();
+		idleImage.src = "assets/images/sprites/Idle-Anim.png";
+
+		function clamp(value, min, max) {
+			return Math.min(max, Math.max(min, value));
+		}
+
+		bgImage.onload = () => {
+			bgCtx.imageSmoothingEnabled = false;
+			spriteCtx.imageSmoothingEnabled = false;
+			spriteCtx.webkitImageSmoothingEnabled = false;
+			spriteCtx.mozImageSmoothingEnabled = false;
+			spriteCtx.msImageSmoothingEnabled = false;
+
+			const scale = 6;
+			spriteCanvas.width = frameWidth * scale;
+			spriteCanvas.height = frameHeight * scale;
+
+			const imageWidth = bgImage.width;
+			const imageHeight = bgImage.height;
+			let frame = 0;
+			let frameElapsed = 0;
+
+			function resizeBg() {
+				bgCanvas.width = window.innerWidth;
+				bgCanvas.height = window.innerHeight;
+			}
+
+			resizeBg();
+			window.addEventListener("resize", resizeBg);
+
+			let camX = 0;
+			let camY = 0;
+			let vx = 0;
+			let vy = 0;
+			let targetX = 0;
+			let targetY = 0;
+			let targetVx = 0;
+			let targetVy = 0;
+			let redirectTimer = 0;
+			let last = performance.now();
+
+			const minSpeed = 10;
+			const maxSpeed = 32;
+
+			function getViewSize() {
+				return {
+					virtualW: Math.ceil(bgCanvas.width / bgZoom),
+					virtualH: Math.ceil(bgCanvas.height / bgZoom)
+				};
+			}
+
+			function pickDirection() {
+				const { virtualW, virtualH } = getViewSize();
+				const maxCamX = Math.max(0, imageWidth - virtualW);
+				const maxCamY = Math.max(0, imageHeight - virtualH);
+				targetX = Math.random() * maxCamX;
+				targetY = Math.random() * maxCamY;
+				redirectTimer = 1400 + Math.random() * 2200;
+			}
+
+			function drawBackgroundCrop(cameraX, cameraY, viewW, viewH) {
+				const srcW = Math.min(viewW, imageWidth);
+				const srcH = Math.min(viewH, imageHeight);
+				const srcX = clamp(Math.floor(cameraX), 0, Math.max(0, imageWidth - srcW));
+				const srcY = clamp(Math.floor(cameraY), 0, Math.max(0, imageHeight - srcH));
+				const dstX = Math.floor((viewW - srcW) / 2);
+				const dstY = Math.floor((viewH - srcH) / 2);
+
+				bgCtx.drawImage(bgImage, srcX, srcY, srcW, srcH, dstX, dstY, srcW, srcH);
+			}
+
+			pickDirection();
+
+			function loop(now) {
+				const dt = now - last;
+				last = now;
+				const dtSec = dt / 1000;
+
+				redirectTimer -= dt;
+				if (redirectTimer <= 0) {
+					pickDirection();
+				}
+
+				const { virtualW, virtualH } = getViewSize();
+				const maxCamX = Math.max(0, imageWidth - virtualW);
+				const maxCamY = Math.max(0, imageHeight - virtualH);
+
+				camX = clamp(camX, 0, maxCamX);
+				camY = clamp(camY, 0, maxCamY);
+				targetX = clamp(targetX, 0, maxCamX);
+				targetY = clamp(targetY, 0, maxCamY);
+
+				const dxToTarget = targetX - camX;
+				const dyToTarget = targetY - camY;
+				const dist = Math.hypot(dxToTarget, dyToTarget) || 1;
+				const speed = Math.min(maxSpeed, Math.max(minSpeed, dist * 0.25));
+
+				targetVx = (dxToTarget / dist) * speed;
+				targetVy = (dyToTarget / dist) * speed;
+
+				vx += (targetVx - vx) * 0.06;
+				vy += (targetVy - vy) * 0.06;
+				camX += vx * dtSec;
+				camY += vy * dtSec;
+				camX = clamp(camX, 0, maxCamX);
+				camY = clamp(camY, 0, maxCamY);
+
+				if (dist < 8) {
+					pickDirection();
+				}
+
+				const renderCamX = Math.floor(camX);
+				const renderCamY = Math.floor(camY);
+
+				bgCtx.setTransform(1, 0, 0, 1, 0, 0);
+				bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+				bgCtx.setTransform(bgZoom, 0, 0, bgZoom, 0, 0);
+				drawBackgroundCrop(renderCamX, renderCamY, virtualW, virtualH);
+				bgCtx.setTransform(1, 0, 0, 1, 0, 0);
+
+				if (idleImage.complete && idleImage.naturalWidth > 0) {
+					spriteCtx.imageSmoothingEnabled = false;
+					frameElapsed += dt;
+					if (frameElapsed >= durations[frame] * tickMs) {
+						frameElapsed = 0;
+						frame = (frame + 1) % durations.length;
+					}
+
+					const sx = frame * frameWidth;
+					const sy = rowIndex * frameHeight;
+					spriteCtx.clearRect(0, 0, spriteCanvas.width, spriteCanvas.height);
+					spriteCtx.drawImage(idleImage, sx, sy, frameWidth, frameHeight, 0, 0, spriteCanvas.width, spriteCanvas.height);
+				}
+
+				requestAnimationFrame(loop);
+			}
+
+			requestAnimationFrame(loop);
+		};
+	</script>
+</body>
+</html>

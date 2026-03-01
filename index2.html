@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Retro Blog Vibes</title>
+	<style>
+		:root {
+			--bg: #efe8d8;
+			--paper: #fffdf8;
+			--ink: #1f1b16;
+			--muted: #6f6353;
+			--line: #312a21;
+			--accent: #8b0000;
+			--accent-soft: #f3d9d9;
+			--link: #003c8f;
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		body {
+			margin: 0;
+			font-family: Georgia, "Times New Roman", serif;
+			background:
+				radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.45), transparent 40%),
+				radial-gradient(circle at 80% 10%, rgba(255, 255, 255, 0.35), transparent 35%),
+				var(--bg);
+			color: var(--ink);
+			line-height: 1.6;
+		}
+
+		.page {
+			max-width: 1050px;
+			margin: 24px auto;
+			border: 3px double var(--line);
+			background: var(--paper);
+			box-shadow: 8px 8px 0 rgba(49, 42, 33, 0.25);
+		}
+
+		.top-strip {
+			background: repeating-linear-gradient(
+				-45deg,
+				#2e2a24,
+				#2e2a24 10px,
+				#453d33 10px,
+				#453d33 20px
+			);
+			color: #fdf7ea;
+			text-align: center;
+			font-size: 0.85rem;
+			letter-spacing: 0.08em;
+			padding: 0.4rem 0.7rem;
+			text-transform: uppercase;
+		}
+
+		header {
+			padding: 1.3rem 1.2rem 0.7rem;
+			border-bottom: 2px solid var(--line);
+			background: linear-gradient(to bottom, #fff9eb, #fffdf8);
+		}
+
+		.title {
+			margin: 0;
+			font-size: clamp(1.9rem, 3.2vw, 2.8rem);
+			letter-spacing: 0.02em;
+			text-transform: uppercase;
+		}
+
+		.subtitle {
+			margin: 0.2rem 0 0.9rem;
+			color: var(--muted);
+			font-style: italic;
+		}
+
+		nav {
+			border-top: 1px solid var(--line);
+			border-bottom: 1px solid var(--line);
+			background: #f6efdf;
+			padding: 0.5rem 0.7rem;
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.6rem;
+			align-items: center;
+		}
+
+		nav a {
+			text-decoration: none;
+			color: var(--ink);
+			border: 1px solid var(--line);
+			background: #fff;
+			padding: 0.2rem 0.55rem;
+			font-size: 0.9rem;
+		}
+
+		nav a:hover {
+			background: var(--accent-soft);
+			color: var(--accent);
+		}
+
+		.layout {
+			display: grid;
+			grid-template-columns: 2.1fr 1fr;
+			gap: 1rem;
+			padding: 1rem;
+		}
+
+		.post,
+		.widget,
+		.notice {
+			border: 1px solid var(--line);
+			background: #fff;
+		}
+
+		.post {
+			margin-bottom: 1rem;
+		}
+
+		.post-header {
+			border-bottom: 1px solid var(--line);
+			background: #f9f3e6;
+			padding: 0.65rem 0.75rem;
+		}
+
+		.post-title {
+			margin: 0;
+			font-size: 1.2rem;
+		}
+
+		.post-meta {
+			margin: 0.15rem 0 0;
+			font-size: 0.84rem;
+			color: var(--muted);
+		}
+
+		.post-content {
+			padding: 0.85rem 0.8rem 0.95rem;
+		}
+
+		.post-content p {
+			margin: 0 0 0.8rem;
+		}
+
+		.notice {
+			padding: 0.65rem 0.8rem;
+			background: #f5ebeb;
+			font-size: 0.9rem;
+			margin-bottom: 1rem;
+		}
+
+		.widget {
+			margin-bottom: 1rem;
+		}
+
+		.widget h3 {
+			margin: 0;
+			padding: 0.55rem 0.65rem;
+			background: #ece4d4;
+			border-bottom: 1px solid var(--line);
+			font-size: 0.95rem;
+			text-transform: uppercase;
+			letter-spacing: 0.05em;
+		}
+
+		.widget .inner {
+			padding: 0.65rem;
+			font-size: 0.92rem;
+		}
+
+		.widget ul {
+			margin: 0;
+			padding-left: 1.05rem;
+		}
+
+		.widget li {
+			margin: 0.35rem 0;
+		}
+
+		a {
+			color: var(--link);
+		}
+
+		.stamp {
+			font-family: "Courier New", monospace;
+			display: inline-block;
+			border: 1px dashed var(--line);
+			padding: 0.08rem 0.4rem;
+			background: #fff8dc;
+			margin-top: 0.3rem;
+		}
+
+		footer {
+			border-top: 2px solid var(--line);
+			background: #f6efdf;
+			padding: 0.8rem 1rem;
+			font-size: 0.85rem;
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: space-between;
+			gap: 0.8rem;
+		}
+
+		.blink {
+			animation: blink 1.3s steps(1) infinite;
+			color: var(--accent);
+		}
+
+		@keyframes blink {
+			50% {
+				opacity: 0;
+			}
+		}
+
+		@media (max-width: 850px) {
+			.layout {
+				grid-template-columns: 1fr;
+			}
+		}
+	</style>
+</head>
+<body>
+	<div class="page">
+		<div class="top-strip">Welcome to my digital corner · Best viewed with curiosity</div>
+
+		<header>
+			<h1 class="title">My Retro Web Journal</h1>
+			<p class="subtitle">Old-school blog energy, clean layout, modern readability.</p>
+			<nav>
+				<a href="#">Home</a>
+				<a href="about.html">About</a>
+				<a href="#">Archive</a>
+				<a href="#">Links</a>
+				<a href="#">Guestbook</a>
+			</nav>
+		</header>
+
+		<div class="layout">
+			<main>
+				<div class="notice">
+					<strong>Site update:</strong> New posts every week about design, coding, and internet nostalgia.
+				</div>
+
+				<article class="post">
+					<div class="post-header">
+						<h2 class="post-title">Building a Cozy Web Space</h2>
+						<p class="post-meta">Posted on February 28, 2026 · 3 min read</p>
+					</div>
+					<div class="post-content">
+						<p>
+							This homepage is inspired by classic personal blogs: clear borders, paper backgrounds,
+							simple navigation, and a lot of personality.
+						</p>
+						<p>
+							The goal is to keep the vintage mood without feeling cluttered, so everything stays easy
+							to read on both desktop and mobile.
+						</p>
+						<a href="#">Continue reading →</a>
+					</div>
+				</article>
+
+				<article class="post">
+					<div class="post-header">
+						<h2 class="post-title">Why I Still Love Blog Layouts</h2>
+						<p class="post-meta">Posted on February 15, 2026 · Notes</p>
+					</div>
+					<div class="post-content">
+						<p>
+							Before endless feeds and algorithms, blogs felt like rooms you visited. Every pixel had
+							intent, every sidebar had little treasures, and every page felt personal.
+						</p>
+						<a href="#">Read note →</a>
+					</div>
+				</article>
+			</main>
+
+			<aside>
+				<section class="widget">
+					<h3>About This Site</h3>
+					<div class="inner">
+						A small corner for web projects, ideas, and experiments with a nostalgic blog aesthetic.
+					</div>
+				</section>
+
+				<section class="widget">
+					<h3>Quick Links</h3>
+					<div class="inner">
+						<ul>
+							<li><a href="#">Latest Post</a></li>
+							<li><a href="#">All Articles</a></li>
+							<li><a href="#">Resources</a></li>
+						</ul>
+					</div>
+				</section>
+
+				<section class="widget">
+					<h3>Status</h3>
+					<div class="inner">
+						<div><span class="blink">●</span> Online and writing</div>
+						<div class="stamp">Visitors: 000128</div>
+					</div>
+				</section>
+			</aside>
+		</div>
+
+		<footer>
+			<div>© 2026 My Retro Web Journal</div>
+			<div>Handmade with HTML + CSS</div>
+		</footer>
+	</div>
+</body>
+</html>
