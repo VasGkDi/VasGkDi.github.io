@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Gapminder</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		html, body {
+			width: 100%;
+			height: 100%;
+			background: #000;
+			overflow: hidden;
+			font-family: Georgia, Georgia;
+		}
+
+		#bg {
+			position: fixed;
+			inset: 0;
+			width: 100vw;
+			height: 100vh;
+			display: block;
+			z-index: 0;
+			image-rendering: pixelated;
+			image-rendering: crisp-edges;
+		}
+
+		#sprite {
+			position: absolute;
+			top: 20vh;
+			left: 85vw;
+			transform: translate(-50%, -50%);
+			z-index: 4;
+			pointer-events: none;
+			image-rendering: pixelated;
+			image-rendering: crisp-edges;
+			image-rendering: -moz-crisp-edges;
+			image-rendering: -webkit-optimize-contrast;
+		}
+
+		.page {
+			position: fixed;
+			inset: 0;
+			display: grid;
+			place-items: center;
+			z-index: 1;
+			padding: 24px;
+		}
+
+		.gapminder-card {
+			width: min(86vh, 92vw, 860px);
+			height: min(86vh, 92vw, 860px);
+			display: grid;
+			grid-template-rows: 1.1fr 0.9fr;
+			background: rgba(0, 0, 0, 0.64);
+			border: 3px solid #ffe066;
+			box-shadow: 0 0 0 3px #000;
+			backdrop-filter: blur(2px);
+		}
+
+		.video-panel {
+			padding: 16px;
+			border-bottom: 2px solid #ffe066;
+			display: grid;
+			grid-template-rows: auto 1fr;
+			gap: 10px;
+		}
+
+		.video-title {
+			font-size: clamp(1.8rem, 4vw, 2.6rem);
+			color: #ffe066;
+			text-align: center;
+		}
+
+		.video-shell {
+			width: 100%;
+			height: 100%;
+			border: 2px solid #ffe066;
+			background: rgba(0, 0, 0, 0.45);
+			overflow: hidden;
+		}
+
+		.video-shell video,
+		.video-shell iframe {
+			width: 100%;
+			height: 100%;
+			display: block;
+			object-fit: contain;
+			background: #000;
+			border: 0;
+		}
+
+		.text-panel {
+			padding: 20px;
+			color: #f6f2cf;
+			overflow: auto;
+		}
+
+		.text-panel h1 {
+			font-size: clamp(1.8rem, 4vw, 2.6rem);
+			margin-bottom: 12px;
+			color: #ffe066;
+		}
+
+		.text-panel p {
+			font-size: 1.04rem;
+			line-height: 1.55;
+			margin-bottom: 12px;
+		}
+
+		.note {
+			font-size: 0.92rem;
+			color: #f1e7a4;
+		}
+
+		.nav-back {
+			display: inline-block;
+			margin-top: 10px;
+			color: #ff7b7b;
+			text-decoration: none;
+			font-weight: 700;
+		}
+
+		.nav-back:hover {
+			text-decoration: underline;
+		}
+
+		@media (max-width: 900px) {
+			.gapminder-card {
+				width: min(92vw, 92vh);
+				height: min(92vw, 92vh);
+			}
+
+			.video-panel {
+				padding: 12px;
+			}
+
+			.text-panel {
+				padding: 14px;
+			}
+		}
+	</style>
+</head>
+<body>
+	<canvas id="bg"></canvas>
+	<canvas id="sprite"></canvas>
+
+	<div class="page">
+		<section class="gapminder-card">
+			<div class="video-panel">
+				<h1 class="video-title">Gapminder</h1>
+				<div class="video-shell">
+					<iframe
+						src="https://www.youtube.com/embed/Crf0Ev1zoIU"
+						title="Gapminder video"
+						allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+						allowfullscreen>
+					</iframe>
+				</div>
+			</div>
+			<div class="text-panel">
+				<p>
+					This area is ready for your Gapminder explanation text.
+					You can describe what the video shows, what data is visualized, and your main conclusions.
+				</p>
+				<p class="note">Top section = video space. Bottom section = text space.</p>
+				<a class="nav-back" href="index.html">← Back to Home</a>
+			</div>
+		</section>
+	</div>
+
+	<script>
+		const frameWidth = 24;
+		const frameHeight = 48;
+		const rowIndex = 7;
+		const durations = [18, 8, 18, 8];
+		const tickMs = 1000 / 60;
+
+		const bgZoom = 2;
+		const bgCanvas = document.getElementById("bg");
+		const bgCtx = bgCanvas.getContext("2d");
+		const spriteCanvas = document.getElementById("sprite");
+		const spriteCtx = spriteCanvas.getContext("2d");
+		const bgImage = new Image();
+		bgImage.src = "assets/images/backgrounds/AsiaBG.png";
+		const idleImage = new Image();
+		idleImage.src = "assets/images/sprites/Idle-Anim.png";
+
+		function clamp(value, min, max) {
+			return Math.min(max, Math.max(min, value));
+		}
+
+		bgImage.onload = () => {
+			bgCtx.imageSmoothingEnabled = false;
+			spriteCtx.imageSmoothingEnabled = false;
+			spriteCtx.webkitImageSmoothingEnabled = false;
+			spriteCtx.mozImageSmoothingEnabled = false;
+			spriteCtx.msImageSmoothingEnabled = false;
+
+			const scale = 6;
+			spriteCanvas.width = frameWidth * scale;
+			spriteCanvas.height = frameHeight * scale;
+
+			const imageWidth = bgImage.width;
+			const imageHeight = bgImage.height;
+			let frame = 0;
+			let frameElapsed = 0;
+
+			function resizeBg() {
+				bgCanvas.width = window.innerWidth;
+				bgCanvas.height = window.innerHeight;
+			}
+
+			resizeBg();
+			window.addEventListener("resize", resizeBg);
+
+			let camX = 0;
+			let camY = 0;
+			let vx = 0;
+			let vy = 0;
+			let targetX = 0;
+			let targetY = 0;
+			let targetVx = 0;
+			let targetVy = 0;
+			let redirectTimer = 0;
+			let last = performance.now();
+
+			const minSpeed = 10;
+			const maxSpeed = 32;
+
+			function getViewSize() {
+				return {
+					virtualW: Math.ceil(bgCanvas.width / bgZoom),
+					virtualH: Math.ceil(bgCanvas.height / bgZoom)
+				};
+			}
+
+			function pickDirection() {
+				const { virtualW, virtualH } = getViewSize();
+				const maxCamX = Math.max(0, imageWidth - virtualW);
+				const maxCamY = Math.max(0, imageHeight - virtualH);
+				targetX = Math.random() * maxCamX;
+				targetY = Math.random() * maxCamY;
+				redirectTimer = 1400 + Math.random() * 2200;
+			}
+
+			function drawBackgroundCrop(cameraX, cameraY, viewW, viewH) {
+				const srcW = Math.min(viewW, imageWidth);
+				const srcH = Math.min(viewH, imageHeight);
+				const srcX = clamp(Math.floor(cameraX), 0, Math.max(0, imageWidth - srcW));
+				const srcY = clamp(Math.floor(cameraY), 0, Math.max(0, imageHeight - srcH));
+				const dstX = Math.floor((viewW - srcW) / 2);
+				const dstY = Math.floor((viewH - srcH) / 2);
+
+				bgCtx.drawImage(bgImage, srcX, srcY, srcW, srcH, dstX, dstY, srcW, srcH);
+			}
+
+			pickDirection();
+
+			function loop(now) {
+				const dt = now - last;
+				last = now;
+				const dtSec = dt / 1000;
+
+				redirectTimer -= dt;
+				if (redirectTimer <= 0) {
+					pickDirection();
+				}
+
+				const { virtualW, virtualH } = getViewSize();
+				const maxCamX = Math.max(0, imageWidth - virtualW);
+				const maxCamY = Math.max(0, imageHeight - virtualH);
+
+				camX = clamp(camX, 0, maxCamX);
+				camY = clamp(camY, 0, maxCamY);
+				targetX = clamp(targetX, 0, maxCamX);
+				targetY = clamp(targetY, 0, maxCamY);
+
+				const dxToTarget = targetX - camX;
+				const dyToTarget = targetY - camY;
+				const dist = Math.hypot(dxToTarget, dyToTarget) || 1;
+				const speed = Math.min(maxSpeed, Math.max(minSpeed, dist * 0.25));
+
+				targetVx = (dxToTarget / dist) * speed;
+				targetVy = (dyToTarget / dist) * speed;
+
+				vx += (targetVx - vx) * 0.06;
+				vy += (targetVy - vy) * 0.06;
+				camX += vx * dtSec;
+				camY += vy * dtSec;
+				camX = clamp(camX, 0, maxCamX);
+				camY = clamp(camY, 0, maxCamY);
+
+				if (dist < 8) {
+					pickDirection();
+				}
+
+				const renderCamX = Math.floor(camX);
+				const renderCamY = Math.floor(camY);
+
+				bgCtx.setTransform(1, 0, 0, 1, 0, 0);
+				bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+				bgCtx.setTransform(bgZoom, 0, 0, bgZoom, 0, 0);
+				drawBackgroundCrop(renderCamX, renderCamY, virtualW, virtualH);
+				bgCtx.setTransform(1, 0, 0, 1, 0, 0);
+
+				if (idleImage.complete && idleImage.naturalWidth > 0) {
+					spriteCtx.imageSmoothingEnabled = false;
+					frameElapsed += dt;
+					if (frameElapsed >= durations[frame] * tickMs) {
+						frameElapsed = 0;
+						frame = (frame + 1) % durations.length;
+					}
+
+					const sx = frame * frameWidth;
+					const sy = rowIndex * frameHeight;
+					spriteCtx.clearRect(0, 0, spriteCanvas.width, spriteCanvas.height);
+					spriteCtx.drawImage(idleImage, sx, sy, frameWidth, frameHeight, 0, 0, spriteCanvas.width, spriteCanvas.height);
+				}
+
+				requestAnimationFrame(loop);
+			}
+
+			requestAnimationFrame(loop);
+		};
+	</script>
+</body>
+</html>
