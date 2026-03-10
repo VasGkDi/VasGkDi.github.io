@@ -77,24 +77,33 @@
 		}
 
 		#oval-links {
-			position: absolute;
-			inset: 0;
 			display: flex;
-			justify-content: center;
+			flex-direction: column;
 			align-items: center;
-			gap: 22px;
+			justify-content: center;
+			gap: 10px;
+			align-items: center;
 			pointer-events: none;
 			font-family: Arial, sans-serif;
 			font-size: 28px;
 			font-weight: 700;
 		}
 
-		#music-toggle {
+		#ui-center {
 			position: absolute;
-			top: calc(50% + 42px);
-			left: 50%;
-			transform: translateX(-50%);
+			inset: 0;
+			display: grid;
+			align-content: center;
+			justify-items: center;
+			gap: 20px;
 			z-index: 4;
+			pointer-events: none;
+		}
+
+		#music-toggle {
+			position: static;
+			transform: none;
+			z-index: auto;
 			padding: 8px 14px;
 			background: #ffe066;
 			color: #3b2800;
@@ -102,6 +111,7 @@
 			font-size: 16px;
 			font-weight: 700;
 			cursor: pointer;
+			pointer-events: auto;
 		}
 
 		#music-toggle:hover {
@@ -130,13 +140,15 @@
 			<!-- YELLOW OVAL OUTLINE: change stroke (color) and stroke-width (thickness) below -->
 			<ellipse cx="120" cy="75" rx="95" ry="45" fill="#ffd300" stroke="#ffd300" stroke-width="6"></ellipse>
 		</svg>
-		<nav id="oval-links" aria-label="site links">
-			<a id="about-link" href="about.html" style="font-family:Georgia" >About</a>
-            <a href="data.html" style="font-family:Georgia">Data</a>
-			<a href="gapminder.html" style="font-family:Georgia">Gapminder</a>
-			<a href="credits.html" style="font-family:Georgia">Credits</a>			
-		</nav>
-		<button id="music-toggle" type="button">Play Music</button>
+		<div id="ui-center">
+			<nav id="oval-links" aria-label="site links">
+				<a id="about-link" href="about.html" style="font-family:Georgia" >About</a>
+            	<a href="data.html" style="font-family:Georgia">Data</a>
+				<a href="gapminder.html" style="font-family:Georgia">Gapminder</a>
+				<a href="credits.html" style="font-family:Georgia">Credits</a>			
+			</nav>
+			<button id="music-toggle" type="button">Play Music</button>
+		</div>
 	</div>
 
 	<script>

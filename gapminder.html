@@ -13,9 +13,10 @@
 
 		html, body {
 			width: 100%;
-			height: 100%;
+			min-height: 100%;
 			background: #000;
-			overflow: hidden;
+			overflow-x: hidden;
+			overflow-y: auto;
 			font-family: Georgia, Georgia;
 		}
 
@@ -33,7 +34,7 @@
 		#sprite {
 			position: absolute;
 			top: 20vh;
-			left: 85vw;
+			left: 75vw;
 			transform: translate(-50%, -50%);
 			z-index: 4;
 			pointer-events: none;
@@ -44,8 +45,8 @@
 		}
 
 		.page {
-			position: fixed;
-			inset: 0;
+			position: relative;
+			min-height: 100vh;
 			display: grid;
 			place-items: center;
 			z-index: 1;
@@ -53,10 +54,11 @@
 		}
 
 		.gapminder-card {
-			width: min(86vh, 92vw, 860px);
-			height: min(86vh, 92vw, 860px);
+			width: min(92vw, 860px);
+			min-height: min(86vh, 860px);
+			height: auto;
 			display: grid;
-			grid-template-rows: 1.1fr 0.9fr;
+			grid-template-rows: auto auto;
 			background: rgba(0, 0, 0, 0.64);
 			border: 3px solid #ffe066;
 			box-shadow: 0 0 0 3px #000;
@@ -65,7 +67,6 @@
 
 		.video-panel {
 			padding: 16px;
-			border-bottom: 2px solid #ffe066;
 			display: grid;
 			grid-template-rows: auto 1fr;
 			gap: 10px;
@@ -79,7 +80,8 @@
 
 		.video-shell {
 			width: 100%;
-			height: 100%;
+			aspect-ratio: 16 / 9;
+			height: auto;
 			border: 2px solid #ffe066;
 			background: rgba(0, 0, 0, 0.45);
 			overflow: hidden;
@@ -98,7 +100,7 @@
 		.text-panel {
 			padding: 20px;
 			color: #f6f2cf;
-			overflow: auto;
+			overflow: visible;
 		}
 
 		.text-panel h1 {
@@ -118,6 +120,15 @@
 			color: #f1e7a4;
 		}
 
+		.note a {
+			color: #ff7b7b;
+			text-decoration: underline;
+		}
+
+		.note a:hover {
+			color: #ff7b7b;
+		}
+
 		.nav-back {
 			display: inline-block;
 			margin-top: 10px;
@@ -132,8 +143,8 @@
 
 		@media (max-width: 900px) {
 			.gapminder-card {
-				width: min(92vw, 92vh);
-				height: min(92vw, 92vh);
+				width: 92vw;
+				min-height: 0;
 			}
 
 			.video-panel {
@@ -165,10 +176,23 @@
 			</div>
 			<div class="text-panel">
 				<p>
-					This area is ready for your Gapminder explanation text.
-					You can describe what the video shows, what data is visualized, and your main conclusions.
+					Στο βίντεο ο Hans Rosling παρουσιάζει μια οπτικοποίηση που δείχνει πώς έχει εξελιχθεί η 
+                    ποιότητα ζωής διάφορων χωρών του πλανήτη. Η γράφος έχει 4 διαστάσεις, τον άξονα X που μετράει 
+                    το βασικό εισόδημα, τον άξονα Y που μετράει το προσδόκιμο ζωής, το χρώμα και το μέγεθος των χωρών 
+                    που απεικονίζονται αντιστοιχεί στην ήπειρο και στο μέγεθος του πληθυσμού της εκάστοτε χώρας αντίστοιχα. 
+                    επιπροσθέτως παρέχει την δυνατότητα να δούμε την εξέλιξη της ποιότητας ζωής σε διάφορες χώρες μέσα στον 
+                    χρόνο, από το 1800 μέχρι το 2024.
 				</p>
-				<p class="note">Top section = video space. Bottom section = text space.</p>
+                <p>
+                    Η οπτικοποίηση κάνει σαφής την προοδο που έχει σημειωθεί σε παγκόσμιο επίπεδο όσον αφορά την ποιότητα ζωής, 
+                    αλλά και τις τεράστιες ανισότητες που υπάρχουν ακόμα μεταξύ των διαφόρων χωρών. Στο βίντεο, έμφαση δίνεται την Κίνα και το 
+                    Ηνωμένο Βασίλειο, όπου η πρώτη έχει σημειώσει ραγδαία πρόοδο, ειδικά τον τελευταίο αιώνα, ενώ η δεύτερη φαίνεται να 
+                    έχει φτάσει ένα πλατό και να μένει στάσιμη. 
+                </p>
+				<p class="note">Το εργαλείο βρίσκεται 
+                    <a href="https://www.gapminder.org/tools/?from=world#$ui$chart$trails:true;;&amp;chart-type=bubbles&amp;url=v2" 
+                    target="_blank" rel="noopener noreferrer">εδώ</a>. Μπορούμε να δούμε και μια γνωστή χώρα ακριβώς ανάμεσα τους στο σήμερα...!</p>
+
 				<a class="nav-back" href="index.html">← Back to Home</a>
 			</div>
 		</section>
